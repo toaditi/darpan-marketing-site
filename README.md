@@ -1,15 +1,17 @@
-# Darpan Landing Page
+# Darpan Marketing Site
 
-Darpan is a reconciliation workspace landing page built with TanStack Start. The site presents Darpan's core product flow: source connections, schemas, saved reconciliation runs, RuleSets, generated outputs, testimonials, a call-to-action, and a Netlify-powered newsletter signup.
+Client-facing one-page website for Darpan, built with TanStack Start and deployed on Netlify.
+
+The site presents Darpan as a reconciliation workspace for saved runs, source setup, schemas, RuleSets, generated output, and automation-ready execution. Its visual system intentionally follows the Darpan app: grayscale dark/light themes, IBM Plex Mono typography, low-radius panels, compact controls, and restrained operational copy.
 
 ## Key Technologies
 
-- TanStack Start and TanStack Router for the React application and file-based routing
-- React 19 for UI components and form state
-- Vite 7 for local development
-- Tailwind CSS 4 for styling
-- Lucide React for interface icons
-- Netlify Forms for the newsletter signup workflow
+- TanStack Start and TanStack Router
+- React 19
+- Vite 7
+- Tailwind CSS 4
+- Lucide React icons
+- Netlify hosting
 
 ## Local Development
 
@@ -25,10 +27,10 @@ Run the development server:
 npm run dev
 ```
 
-The Vite development server runs on port 3000 by default. For Netlify feature emulation, use Netlify Dev:
+The Vite development server runs on port 3000 by default.
+
+## Build
 
 ```bash
-netlify dev
+npm run build
 ```
-
-Netlify Forms are registered from `public/__forms.html` during deploy. Local form submissions should be verified on a Netlify deploy preview.

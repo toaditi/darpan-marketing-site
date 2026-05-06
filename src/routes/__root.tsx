@@ -1,6 +1,4 @@
 import { HeadContent, Scripts, createRootRoute } from '@tanstack/react-router'
-
-
 import '../styles.css'
 
 export const Route = createRootRoute({
@@ -14,12 +12,25 @@ export const Route = createRootRoute({
         content: 'width=device-width, initial-scale=1',
       },
       {
-        title: 'Darpan | Reconciliation workspace',
+        title: 'Darpan | Compare systems. Explain every difference.',
       },
       {
         name: 'description',
         content:
-          'Darpan connects source systems, schemas, RuleSets, reconciliation runs, and reviewable outputs in one workspace.',
+          'Darpan turns recurring commerce reconciliation into saved runs with sources, schemas, matching keys, rules, history, and generated files.',
+      },
+      {
+        property: 'og:title',
+        content: 'Darpan | Compare systems. Explain every difference.',
+      },
+      {
+        property: 'og:description',
+        content:
+          'A client-facing overview of Darpan, the reconciliation workspace for repeatable source comparison and reviewable output.',
+      },
+      {
+        property: 'og:type',
+        content: 'website',
       },
     ],
   }),
