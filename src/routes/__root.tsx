@@ -12,21 +12,21 @@ export const Route = createRootRoute({
         content: 'width=device-width, initial-scale=1',
       },
       {
-        title: 'Darpan | Compare systems. Explain every difference.',
+        title: 'Darpan | See where your systems disagree.',
       },
       {
         name: 'description',
         content:
-          'Darpan turns recurring commerce reconciliation into saved runs with sources, schemas, matching keys, rules, history, and generated files.',
+          'Darpan compares records across systems and returns the rows that are missing, different, or out of sync.',
       },
       {
         property: 'og:title',
-        content: 'Darpan | Compare systems. Explain every difference.',
+        content: 'Darpan | See where your systems disagree.',
       },
       {
         property: 'og:description',
         content:
-          'A client-facing overview of Darpan, the reconciliation workspace for repeatable source comparison and reviewable output.',
+          'Reconciliation software for teams that need to see where systems disagree.',
       },
       {
         property: 'og:type',
@@ -41,6 +41,9 @@ function RootDocument({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
       <head>
+        <link rel="icon" type="image/svg+xml" href="/darpan-mark.svg" />
+        <link rel="shortcut icon" href="/darpan-mark.svg" />
+        <link rel="apple-touch-icon" href="/darpan-mark.svg" />
         <HeadContent />
       </head>
       <body>

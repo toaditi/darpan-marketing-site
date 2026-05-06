@@ -1,19 +1,14 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { useEffect, useState } from 'react'
 import {
   ArrowRight,
+  ArrowUpRight,
   Braces,
-  Check,
   Database,
-  Home as HomeIcon,
-  Moon,
+  FileText,
+  GitCompareArrows,
+  History,
   Play,
-  Search,
-  Settings,
-  ShieldCheck,
   SquareTerminal,
-  Sun,
-  User,
   Workflow,
 } from 'lucide-react'
 
@@ -21,297 +16,300 @@ export const Route = createFileRoute('/')({
   component: Home,
 })
 
-const productModules = [
+const navItems = [
+  ['Product', '#product'],
+  ['Workflow', '#run-model'],
+  ['Systems', '#systems'],
+  ['Contact', '#contact'],
+] as const
+
+const productCards = [
   {
+    number: '01',
     icon: Database,
-    title: 'Source connections',
-    description:
-      'Connect SFTP, NetSuite, Shopify, HotWax, APIs, and files before the run starts.',
+    title: 'Source setup',
+    body: 'Select the systems, files, or APIs that should agree.',
+    action: 'Choose sources',
   },
   {
+    number: '02',
     icon: Braces,
-    title: 'Schema contracts',
-    description:
-      'Map fields, data types, and primary IDs so every comparison has a stable contract.',
+    title: 'Field mapping',
+    body: 'Match records by the IDs and fields your team trusts.',
+    action: 'Map fields',
   },
   {
-    icon: Workflow,
-    title: 'Saved runs',
-    description:
-      'Reuse the same sources, schemas, keys, and RuleSets manually or on a schedule.',
-  },
-  {
-    icon: ShieldCheck,
-    title: 'Evidence trail',
-    description:
-      'Keep counts, differences, generated files, and result links tied to run history.',
+    number: '03',
+    icon: GitCompareArrows,
+    title: 'Mismatch review',
+    body: 'Review missing rows, changed values, and status differences.',
+    action: 'Review mismatches',
   },
 ]
 
 const runSteps = [
   {
-    title: 'Connect',
-    body: 'Point Darpan at APIs, SFTP locations, configured systems, or files once.',
+    step: 'Connect',
+    detail: 'Select the two sources to reconcile.',
   },
   {
-    title: 'Shape',
-    body: 'Map fields and primary IDs so both sides speak the same record language.',
+    step: 'Map',
+    detail: 'Define the fields that identify and describe each record.',
   },
   {
-    title: 'Compare',
-    body: 'Run reusable matching logic and RuleSets that classify differences.',
+    step: 'Compare',
+    detail: 'Run the reconciliation and separate matches from mismatches.',
   },
   {
-    title: 'Explain',
-    body: 'Open counts, generated files, and result links from the same run history.',
+    step: 'Review',
+    detail: 'Open the counts, mismatch list, and output files.',
   },
 ]
 
-const sourceSystems = [
-  'NetSuite',
-  'Shopify',
-  'HotWax',
-  'SFTP',
-  'CSV / JSON',
-  'REST APIs',
+const systems = [
+  'ERP',
+  'Commerce',
+  'Operations',
+  'Warehouse',
+  'Files',
+  'APIs',
 ]
 
-const technicalPoints = [
-  'Tenant-aware setup records',
-  'Reusable saved-run configuration',
-  'Schema-driven file and payload parsing',
-  'RuleSet-backed difference classification',
-  'Generated files linked to completed runs',
-  'Manual and scheduled execution paths',
-]
+const previewSourceFiles = [
+  ['Shopify', 'Source A'],
+  ['NetSuite', 'Source B'],
+] as const
+
+const previewBuckets = [
+  ['Only in Shopify', '14'],
+  ['Only in NetSuite', '8'],
+  ['Different values', '21'],
+] as const
+
+const previewRows = [
+  ['REC-001', 'Value mismatch', 'field changed'],
+  ['REC-002', 'Missing in NetSuite', 'present in Shopify'],
+  ['REC-003', 'Missing in Shopify', 'present in NetSuite'],
+] as const
+
+const useCases = [
+  {
+    number: '01',
+    icon: Workflow,
+    title: 'For operators',
+    body: 'Catch pending orders that cannot move to fulfillment because Shopify and NetSuite do not agree.',
+    prompt: 'Which pending orders are blocked from fulfillment?',
+    answer: 'Darpan shows the orders missing or different between Shopify and NetSuite so the team knows what must sync before fulfillment moves.',
+  },
+  {
+    number: '02',
+    icon: FileText,
+    title: 'For finance teams',
+    body: 'During monthly close, check that Shopify and NetSuite agree before finance locks the books.',
+    prompt: 'What needs to sync before month-end close?',
+    answer: 'Darpan shows the missing or different records so finance can clear the mismatch list before closing the month.',
+  },
+  {
+    number: '03',
+    icon: SquareTerminal,
+    title: 'For technical leaders',
+    body: 'Replace one-off scripts and spreadsheets with a repeatable comparison your team can reopen.',
+    prompt: 'Where is the reconciliation logic defined?',
+    answer: 'Sources, field mapping, and run output stay together.',
+  },
+] as const
 
 function Home() {
-  const [theme, setTheme] = useState<'dark' | 'light'>('dark')
-
-  useEffect(() => {
-    const storedTheme = window.localStorage.getItem('darpan-site-theme')
-    if (storedTheme === 'light' || storedTheme === 'dark') {
-      setTheme(storedTheme)
-    }
-  }, [])
-
-  useEffect(() => {
-    document.documentElement.dataset.theme = theme
-    window.localStorage.setItem('darpan-site-theme', theme)
-  }, [theme])
-
-  const nextTheme = theme === 'dark' ? 'light' : 'dark'
-
   return (
     <main className="site-shell">
-      <header className="site-header" aria-label="Darpan marketing navigation">
-        <a className="brand-link" href="/" aria-label="Darpan home">
-          <img src="/darpan-mark.svg" alt="" className="brand-mark" />
-          <span>Darpan</span>
-        </a>
-        <nav className="site-nav" aria-label="Page sections">
-          <a href="#product">Product</a>
-          <a href="#run-model">Workflow</a>
-          <a href="#systems">Integrations</a>
-          <a href="#contact">Contact</a>
-        </nav>
-        <div className="header-actions">
-          <button
-            type="button"
-            className={`theme-toggle ${theme}`}
-            aria-label={`Switch to ${nextTheme} mode`}
-            aria-pressed={theme === 'dark'}
-            onClick={() => setTheme(nextTheme)}
-          >
-            <Sun className="theme-toggle-icon theme-toggle-sun" aria-hidden />
-            <Moon className="theme-toggle-icon theme-toggle-moon" aria-hidden />
-            <span className="theme-toggle-thumb" />
-          </button>
-          <a className="ghost-action" href="https://docs.drpn.ai">
-            Docs
-          </a>
-          <a className="primary-action" href="#contact">
-            Talk to us
-            <ArrowRight size={15} aria-hidden />
-          </a>
-        </div>
-      </header>
-
+      <SiteHeader />
       <HeroSection />
+      <UseCasesSection />
       <ProductSection />
       <RunModelSection />
       <SystemsSection />
-      <TechnicalSection />
       <ContactSection />
       <SiteFooter />
     </main>
   )
 }
 
+function SiteHeader() {
+  return (
+    <header className="site-header" aria-label="Darpan marketing navigation">
+      <a className="brand-link" href="/" aria-label="Darpan home">
+        <img src="/darpan-mark.svg" alt="" className="brand-mark" />
+        <span>Darpan</span>
+      </a>
+
+      <nav className="site-nav" aria-label="Page sections">
+        {navItems.map(([label, href]) => (
+          <a className="line-link" href={href} key={label}>
+            <span>{label}</span>
+          </a>
+        ))}
+      </nav>
+
+      <a className="line-link header-contact" href="https://hotwax-darpan-dev.web.app/login">
+        <span>Open Darpan</span>
+      </a>
+    </header>
+  )
+}
+
 function HeroSection() {
   return (
     <section className="hero-section">
-      <div className="hero-copy">
-        <h1>Compare systems. Explain every difference.</h1>
-        <p>
-          Darpan turns recurring commerce reconciliation into saved runs with
-          source connections, schemas, matching keys, rules, history, and
-          generated files.
-        </p>
-        <div className="hero-actions">
-          <a className="primary-action primary-action--large" href="#product">
-            See how it runs
-            <ArrowRight size={16} aria-hidden />
-          </a>
-          <a className="ghost-action ghost-action--large" href="https://docs.drpn.ai">
-            Read the docs
-          </a>
+      <div className="hero-background" aria-hidden />
+
+      <div className="hero-content">
+        <div className="hero-copy">
+          <h1>See where your systems disagree.</h1>
+          <p>
+            Darpan is for teams moving too fast for manual reconciliation. It
+            compares records across systems and returns the rows that are
+            missing, different, or out of sync.
+          </p>
+          <div className="hero-actions">
+            <a className="pill-action pill-action--solid" href="mailto:hello@drpn.ai?subject=Darpan%20demo">
+              Start with a run
+            </a>
+            <a className="pill-action" href="https://docs.drpn.ai">
+              Read docs
+            </a>
+          </div>
         </div>
+
+        <RunResultPreview />
       </div>
-      <ProductPreview />
     </section>
   )
 }
 
-function ProductPreview() {
+function RunResultPreview() {
   return (
-    <div className="product-preview" aria-label="Darpan app run-history preview">
-      <div className="app-preview-shell">
-        <div className="app-preview-frame">
-          <section className="app-preview-hero">
-            <h2>Shopify to HotWax Orders</h2>
-          </section>
-
-          <section className="app-preview-board">
-            <section className="app-preview-section">
-              <header className="app-preview-section-head">
-                <h3>Most Recent</h3>
-              </header>
-              <article className="app-preview-tile app-preview-featured-tile">
-                <div className="app-preview-tile-head">
-                  <span className="app-preview-tile-title">May 05, 2026 11:59 PM</span>
-                  <span className="status-badge success">Succeeded</span>
-                </div>
-                <dl className="app-preview-metrics app-preview-metrics--featured">
-                  <div>
-                    <dt>Total differences</dt>
-                    <dd>73</dd>
-                  </div>
-                  <div>
-                    <dt>Missing from Shopify</dt>
-                    <dd>18</dd>
-                  </div>
-                  <div>
-                    <dt>Missing from HotWax</dt>
-                    <dd>9</dd>
-                  </div>
-                </dl>
-              </article>
-            </section>
-
-            <section className="app-preview-section">
-              <header className="app-preview-section-head">
-                <h3>Previous Results</h3>
-              </header>
-              <div className="app-preview-grid">
-                {[
-                  ['May 04, 2026 11:59 PM', '41', '7', '5'],
-                  ['May 03, 2026 11:59 PM', '36', '4', '2'],
-                ].map(([date, total, shopify, hotwax]) => (
-                  <article className="app-preview-tile app-preview-history-tile" key={date}>
-                    <div className="app-preview-tile-head">
-                      <span className="app-preview-tile-title">{date}</span>
-                    </div>
-                    <dl className="app-preview-metrics">
-                      <div>
-                        <dt>Total differences</dt>
-                        <dd>{total}</dd>
-                      </div>
-                      <div>
-                        <dt>Missing from Shopify</dt>
-                        <dd>{shopify}</dd>
-                      </div>
-                      <div>
-                        <dt>Missing from HotWax</dt>
-                        <dd>{hotwax}</dd>
-                      </div>
-                    </dl>
-                  </article>
-                ))}
-              </div>
-            </section>
-
-            <section className="app-preview-section">
-              <header className="app-preview-section-head">
-                <h3>Run Setup</h3>
-              </header>
-              <div className="app-preview-summary-grid">
-                <article className="app-preview-summary-card">
-                  <span>Source 1</span>
-                  <strong>Shopify Admin API</strong>
-                </article>
-                <article className="app-preview-summary-card">
-                  <span>Source 2</span>
-                  <strong>HotWax Orders API</strong>
-                </article>
-                <article className="app-preview-summary-card">
-                  <span>RuleSet</span>
-                  <strong>Order status audit</strong>
-                </article>
-              </div>
-            </section>
-          </section>
+    <article className="app-preview" aria-label="Darpan saved run result preview">
+      <header className="app-preview-header">
+        <div>
+          <span>Example run</span>
+          <h2>Shopify / NetSuite</h2>
         </div>
+        <button type="button" aria-label="Open run result">
+          <Play size={16} aria-hidden />
+        </button>
+      </header>
+
+      <section className="app-preview-source" aria-label="Run source details">
+        <div>
+          <span>Saved run</span>
+          <strong>Completed with output</strong>
+        </div>
+        <div className="app-preview-files">
+          {previewSourceFiles.map(([label, fileName]) => (
+            <p key={fileName}>
+              <span>{label}</span>
+              <strong>{fileName}</strong>
+            </p>
+          ))}
+        </div>
+      </section>
+
+      <div className="app-preview-buckets" aria-label="Difference summary">
+        {previewBuckets.map(([label, count]) => (
+          <div key={label}>
+            <span>{label}</span>
+            <strong>{count}</strong>
+          </div>
+        ))}
       </div>
 
-      <div className="app-preview-chrome" aria-label="Darpan app chrome preview">
-        <div className="app-preview-footer-actions">
-          <button type="button" className="app-preview-icon-action" aria-label="Open run">
-            <Play size={18} aria-hidden />
-          </button>
-          <button type="button" className="app-preview-icon-action" aria-label="Run settings">
-            <Settings size={18} aria-hidden />
-          </button>
+      <div className="app-preview-table" aria-label="Generated output rows">
+        <div className="app-preview-table-head">
+          <span>Record ID</span>
+          <span>Classification</span>
+          <span>Evidence</span>
         </div>
-
-        <div className="app-preview-floating-stack">
-          <div className="app-preview-actions">
-            <button type="button" className="app-preview-fab" aria-label="Go to Dashboard">
-              <HomeIcon size={16} aria-hidden />
-            </button>
-            <button type="button" className="app-preview-fab" aria-label="Open user details">
-              <User size={16} aria-hidden />
-            </button>
+        {previewRows.map(([recordId, classification, evidence]) => (
+          <div className="app-preview-table-row" key={recordId}>
+            <span>{recordId}</span>
+            <span>{classification}</span>
+            <span>{evidence}</span>
           </div>
-
-          <div className="app-preview-command">
-            <span className="app-preview-command-dot" aria-hidden />
-            <span>Ask Darpan</span>
-            <span className="app-preview-command-shortcut">Cmd/Ctrl+K</span>
-            <Search size={16} aria-hidden />
-          </div>
-        </div>
+        ))}
       </div>
+    </article>
+  )
+}
+
+function SectionCue({ number, label }: { number: string; label: string }) {
+  return (
+    <div className="section-cue" aria-label={`${label} section ${number}`}>
+      <span>{number}</span>
+      <strong>{label}</strong>
     </div>
+  )
+}
+
+function UseCasesSection() {
+  return (
+    <section id="use-cases" className="page-section use-cases-section">
+      <div className="section-heading">
+        <SectionCue number="01" label="Teams" />
+        <h2>Different teams. One mismatch list.</h2>
+      </div>
+
+      <div className="use-case-stack">
+        {useCases.map((item) => (
+          <article className="use-case-panel" key={item.title}>
+            <div className="use-case-copy">
+              <span className="item-cue">Role {item.number}</span>
+              <item.icon size={24} aria-hidden />
+              <h3>{item.title}</h3>
+              <p>{item.body}</p>
+            </div>
+
+            <div className="use-case-window">
+              <header>
+                <span>Run review</span>
+                <button type="button" aria-label={`Open ${item.title} run preview`}>
+                  <Play size={16} aria-hidden />
+                </button>
+              </header>
+              <div className="use-case-prompt">{item.prompt}</div>
+              <p>{item.answer}</p>
+            </div>
+          </article>
+        ))}
+      </div>
+    </section>
   )
 }
 
 function ProductSection() {
   return (
-    <section id="product" className="page-section">
-      <div className="section-copy">
-        <h2>One run. Full context.</h2>
-        <p>
-          Each saved run keeps the connections, schemas, keys, rules, outputs,
-          and history needed to rerun a comparison and explain what changed.
-        </p>
+    <section id="product" className="page-section product-section">
+      <div className="section-heading">
+        <SectionCue number="02" label="Product" />
+        <h2>What Darpan checks.</h2>
       </div>
-      <div className="module-grid">
-        {productModules.map((item) => (
-          <article className="module-card" key={item.title}>
-            <item.icon size={22} aria-hidden />
-            <h3>{item.title}</h3>
-            <p>{item.description}</p>
+
+      <div className="product-panels">
+        {productCards.map((item) => (
+          <article className="product-panel" key={item.title}>
+            <div className="product-panel-meta" aria-hidden>
+              <span>Check {item.number}</span>
+              <div>
+                <item.icon size={44} />
+              </div>
+            </div>
+            <div className="product-panel-copy">
+              <h3>{item.title}</h3>
+              <p>{item.body}</p>
+            </div>
+            <a className="inline-action" href="#run-model">
+              {item.action}
+              <ArrowUpRight size={18} aria-hidden />
+            </a>
           </article>
         ))}
       </div>
@@ -321,20 +319,22 @@ function ProductSection() {
 
 function RunModelSection() {
   return (
-    <section id="run-model" className="page-section page-section--band">
-      <div className="section-copy">
-        <h2>Connect. Compare. Explain.</h2>
+    <section id="run-model" className="page-section run-model-section">
+      <div className="run-model-copy">
+        <SectionCue number="03" label="Workflow" />
+        <h2>How a run works.</h2>
         <p>
-          Darpan gives reconciliation a repeatable path: define sources, shape
-          the data, run the rules, and review the evidence.
+          A run is one repeatable reconciliation: sources, mapping, comparison,
+          and output.
         </p>
       </div>
-      <div className="run-steps">
-        {runSteps.map((step, index) => (
-          <article className="run-step" key={step.title}>
-            <span>{String(index + 1).padStart(2, '0')}</span>
-            <h3>{step.title}</h3>
-            <p>{step.body}</p>
+
+      <div className="run-flow">
+        {runSteps.map((item, index) => (
+          <article className="run-flow-step" key={item.step}>
+            <span>Step {String(index + 1).padStart(2, '0')}</span>
+            <h3>{item.step}</h3>
+            <p>{item.detail}</p>
           </article>
         ))}
       </div>
@@ -345,44 +345,70 @@ function RunModelSection() {
 function SystemsSection() {
   return (
     <section id="systems" className="page-section systems-section">
-      <div className="section-copy">
-        <h2>Built for messy commerce data.</h2>
-        <p>
-          Use Darpan across ERP, OMS, commerce platforms, APIs, and files. It
-          does not replace your systems of record. It makes disagreements
-          traceable.
-        </p>
+      <div className="section-heading">
+        <SectionCue number="04" label="Systems" />
+        <h2>Use the systems your team already has.</h2>
       </div>
-      <div className="system-board">
-        {sourceSystems.map((system) => (
-          <span key={system}>{system}</span>
-        ))}
+
+      <div className="system-stage" aria-label="Darpan source systems and run artifacts">
+        <div className="system-list">
+          {systems.map((system) => (
+            <span key={system}>{system}</span>
+          ))}
+        </div>
+        <RunArtifactPreview />
       </div>
     </section>
   )
 }
 
-function TechnicalSection() {
+function RunArtifactPreview() {
   return (
-    <section className="page-section technical-section">
-      <div className="technical-panel">
+    <article className="run-artifact">
+      <header>
         <div>
-          <h2>Ready to build. Easy to run.</h2>
-          <p>
-            Darpan reads, compares, classifies, and exports evidence while your
-            source systems stay accountable.
-          </p>
+          <span>Saved Run</span>
+          <h3>Recurring reconciliation</h3>
         </div>
-        <ul>
-          {technicalPoints.map((point) => (
-            <li key={point}>
-              <Check size={15} aria-hidden />
-              <span>{point}</span>
-            </li>
-          ))}
-        </ul>
+        <button type="button" aria-label="Open run result">
+          <Play size={18} aria-hidden />
+        </button>
+      </header>
+
+      <div className="run-artifact-grid">
+        <div>
+          <span>Result</span>
+          <strong>Succeeded</strong>
+        </div>
+        <div>
+          <span>Differences</span>
+          <strong>43</strong>
+        </div>
+        <div>
+          <span>Match rule</span>
+          <strong>Record comparison</strong>
+        </div>
+        <div>
+          <span>Output</span>
+          <strong>3 files</strong>
+        </div>
       </div>
-    </section>
+
+      <ol>
+        <li>
+          <History size={16} aria-hidden />
+          Completed runs keep setup and result together.
+        </li>
+        <li>
+          <FileText size={16} aria-hidden />
+          Output files list the records to review.
+        </li>
+        <li>
+          <Workflow size={16} aria-hidden />
+          Scheduled runs repeat the same comparison.
+        </li>
+      </ol>
+    </article>
   )
 }
 
@@ -390,23 +416,19 @@ function ContactSection() {
   return (
     <section id="contact" className="contact-section">
       <div>
-        <h2>Bring your messiest reconciliation.</h2>
+        <h2>Start with the reconciliation you still check by hand.</h2>
         <p>
-          Start with a comparison your team still handles manually. Darpan turns
-          it into a named setup, a saved run, and review-ready output.
+          Pick one pair of systems. Define what should match. Review the first
+          mismatch list.
         </p>
       </div>
       <div className="contact-actions">
-        <a
-          className="primary-action primary-action--large"
-          href="mailto:hello@drpn.ai?subject=Darpan%20marketing%20site%20inquiry"
-        >
-          Start a conversation
-          <ArrowRight size={16} aria-hidden />
+        <a className="pill-action pill-action--solid" href="mailto:hello@drpn.ai?subject=Darpan%20marketing%20site%20inquiry">
+          Schedule a walkthrough
+          <ArrowRight size={17} aria-hidden />
         </a>
-        <a className="ghost-action ghost-action--large" href="https://hotwax-darpan-dev.web.app/login">
+        <a className="pill-action" href="https://hotwax-darpan-dev.web.app/login">
           Open Darpan
-          <Play size={15} aria-hidden />
         </a>
       </div>
     </section>
@@ -416,18 +438,25 @@ function ContactSection() {
 function SiteFooter() {
   return (
     <footer className="site-footer">
-      <div className="footer-brand">
-        <img src="/darpan-mark.svg" alt="" className="brand-mark" />
+      <div className="footer-links">
+        <a className="line-link" href="https://docs.drpn.ai">
+          <span>Docs</span>
+        </a>
+        <a className="line-link" href="https://hotwax-darpan-dev.web.app/login">
+          <span>Open Darpan</span>
+        </a>
+        <a className="line-link" href="mailto:hello@drpn.ai">
+          <span>Contact</span>
+        </a>
+      </div>
+
+      <div className="footer-wordmark" aria-hidden>
+        <img src="/darpan-mark.svg" alt="" />
         <span>Darpan</span>
       </div>
-      <div className="footer-links">
-        <a href="https://docs.drpn.ai">Docs</a>
-        <a href="https://hotwax-darpan-dev.web.app/login">Open Darpan</a>
-        <a href="mailto:hello@drpn.ai">Contact</a>
-      </div>
+
       <p>
-        <SquareTerminal size={14} aria-hidden />
-        Reconciliation with a run trail. Copyright 2026.
+        Copyright 2026.
       </p>
     </footer>
   )
