@@ -4,6 +4,7 @@ import {
   ArrowRight,
   ArrowUpRight,
   Braces,
+  ChevronDown,
   Database,
   FileText,
   GitCompareArrows,
@@ -21,6 +22,7 @@ const navItems = [
   ['Product', '#product'],
   ['Workflow', '#run-model'],
   ['Systems', '#systems'],
+  ['FAQ', '#faq'],
   ['Contact', '#contact'],
 ] as const
 
@@ -132,6 +134,33 @@ const useCases = [
   },
 ] as const
 
+const faqItems = [
+  {
+    question: 'What does Darpan do?',
+    answer: 'Darpan compares records across two systems and shows the rows that are missing, different, or out of sync.',
+  },
+  {
+    question: 'Which systems can Darpan compare?',
+    answer: 'Darpan can compare commerce, ERP, operations, warehouse, file, and API data as long as the records can be mapped to a shared identifier.',
+  },
+  {
+    question: 'What does a run return?',
+    answer: 'A run returns counts, classifications, evidence, history, and output files so the team can review exactly what changed.',
+  },
+  {
+    question: 'Does Darpan change data in our systems?',
+    answer: 'No. Darpan highlights mismatches first. Your team decides what should be corrected in the source systems.',
+  },
+  {
+    question: 'Who uses Darpan?',
+    answer: 'Operators, finance teams, and technical leaders use Darpan when manual reconciliation is slowing down fulfillment, close, or reporting work.',
+  },
+  {
+    question: 'How do teams start?',
+    answer: 'Start with one recurring comparison: choose two sources, map the trusted fields, run the reconciliation, and review the mismatch list.',
+  },
+] as const
+
 function Home() {
   useScrollReveal()
 
@@ -143,6 +172,7 @@ function Home() {
       <ProductSection />
       <RunModelSection />
       <SystemsSection />
+      <FaqSection />
       <ContactSection />
       <SiteFooter />
     </main>
@@ -167,8 +197,8 @@ function useScrollReveal() {
           '.run-model-copy',
           '.run-flow-step',
           '.systems-section .section-heading',
-          '.system-list span',
           '.run-artifact',
+          '.faq-item',
           '.contact-section > *',
           '.footer-links',
           '.footer-wordmark',
@@ -295,7 +325,7 @@ function SiteHeader() {
         ))}
       </nav>
 
-      <a className="line-link header-contact" href="https://hotwax-darpan-dev.web.app/login">
+      <a className="line-link header-contact" href="https://darpan-app.hotwax.io">
         <span>Open Darpan</span>
       </a>
     </header>
@@ -559,6 +589,32 @@ function RunArtifactPreview() {
   )
 }
 
+function FaqSection() {
+  return (
+    <section id="faq" className="page-section faq-section">
+      <div className="section-heading">
+        <SectionCue number="05" label="FAQ" />
+        <h2>Basic questions, straight answers.</h2>
+      </div>
+
+      <div className="faq-list">
+        {faqItems.map((item, index) => (
+          <details className="faq-item" key={item.question}>
+            <summary>
+              <span className="faq-index">{String(index + 1).padStart(2, '0')}</span>
+              <span className="faq-question">{item.question}</span>
+              <span className="faq-toggle" aria-hidden>
+                <ChevronDown size={18} />
+              </span>
+            </summary>
+            <p>{item.answer}</p>
+          </details>
+        ))}
+      </div>
+    </section>
+  )
+}
+
 function ContactSection() {
   return (
     <section id="contact" className="contact-section">
@@ -574,7 +630,7 @@ function ContactSection() {
           Schedule a walkthrough
           <ArrowRight size={17} aria-hidden />
         </a>
-        <a className="pill-action" href="https://hotwax-darpan-dev.web.app/login">
+        <a className="pill-action" href="https://darpan-app.hotwax.io">
           Open Darpan
         </a>
       </div>
@@ -589,7 +645,7 @@ function SiteFooter() {
         <a className="line-link" href="https://docs.drpn.ai">
           <span>Docs</span>
         </a>
-        <a className="line-link" href="https://hotwax-darpan-dev.web.app/login">
+        <a className="line-link" href="https://darpan-app.hotwax.io">
           <span>Open Darpan</span>
         </a>
         <a className="line-link" href="mailto:hello@drpn.ai">
