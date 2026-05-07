@@ -1,4 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router'
+import { useEffect, useState } from 'react'
 import {
   ArrowRight,
   ArrowUpRight,
@@ -98,7 +99,11 @@ const useCases = [
     icon: Workflow,
     title: 'For operators',
     body: 'Catch pending orders that cannot move to fulfillment because Shopify and NetSuite do not agree.',
-    prompt: 'Which pending orders are blocked from fulfillment?',
+    prompts: [
+      'Which pending orders are blocked from fulfillment?',
+      'Which Shopify orders are missing in NetSuite?',
+      'Which orders changed status before fulfillment?',
+    ],
     answer: 'Darpan shows the orders missing or different between Shopify and NetSuite so the team knows what must sync before fulfillment moves.',
   },
   {
@@ -106,7 +111,11 @@ const useCases = [
     icon: FileText,
     title: 'For finance teams',
     body: 'During monthly close, check that Shopify and NetSuite agree before finance locks the books.',
-    prompt: 'What needs to sync before month-end close?',
+    prompts: [
+      'What needs to sync before month-end close?',
+      'Which revenue records disagree before close?',
+      'Which NetSuite lines do not match Shopify?',
+    ],
     answer: 'Darpan shows the missing or different records so finance can clear the mismatch list before closing the month.',
   },
   {
@@ -114,12 +123,18 @@ const useCases = [
     icon: SquareTerminal,
     title: 'For technical leaders',
     body: 'Replace one-off scripts and spreadsheets with a repeatable comparison your team can reopen.',
-    prompt: 'Where is the reconciliation logic defined?',
+    prompts: [
+      'Where is the reconciliation logic defined?',
+      'Which saved run produced this output?',
+      'What changed since the last comparison?',
+    ],
     answer: 'Sources, field mapping, and run output stay together.',
   },
 ] as const
 
 function Home() {
+  useScrollReveal()
+
   return (
     <main className="site-shell">
       <SiteHeader />
@@ -131,6 +146,136 @@ function Home() {
       <ContactSection />
       <SiteFooter />
     </main>
+  )
+}
+
+function useScrollReveal() {
+  useEffect(() => {
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)')
+
+    if (prefersReducedMotion.matches || !('IntersectionObserver' in window)) {
+      document.documentElement.classList.remove('reveal-enabled')
+      return
+    }
+
+    const revealTargets = Array.from(
+      document.querySelectorAll<HTMLElement>(
+        [
+          '.section-heading',
+          '.use-case-panel',
+          '.product-panel',
+          '.run-model-copy',
+          '.run-flow-step',
+          '.systems-section .section-heading',
+          '.system-list span',
+          '.run-artifact',
+          '.contact-section > *',
+          '.footer-links',
+          '.footer-wordmark',
+          '.site-footer > p',
+        ].join(', ')
+      )
+    )
+
+    document.documentElement.classList.add('reveal-enabled')
+
+    revealTargets.forEach((target, index) => {
+      target.style.setProperty('--reveal-delay', `${Math.min(index % 3, 2) * 70}ms`)
+    })
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return
+          entry.target.classList.add('is-visible')
+          observer.unobserve(entry.target)
+        })
+      },
+      {
+        rootMargin: '0px 0px -14%',
+        threshold: 0.12,
+      }
+    )
+
+    revealTargets.forEach((target) => observer.observe(target))
+
+    return () => {
+      observer.disconnect()
+      document.documentElement.classList.remove('reveal-enabled')
+      revealTargets.forEach((target) => {
+        target.classList.remove('is-visible')
+        target.style.removeProperty('--reveal-delay')
+      })
+    }
+  }, [])
+}
+
+type TypingPhase = 'holding' | 'deleting' | 'typing'
+
+const questionTypingTiming = {
+  hold: 3300,
+  type: 78,
+  delete: 54,
+  deleteStep: 1,
+}
+
+function TypedQuestion({
+  questions,
+  delayOffset = 0,
+}: {
+  questions: readonly string[]
+  delayOffset?: number
+}) {
+  const [questionIndex, setQuestionIndex] = useState(0)
+  const [visibleLength, setVisibleLength] = useState(questions[0]?.length ?? 0)
+  const [phase, setPhase] = useState<TypingPhase>('holding')
+
+  const activeQuestion = questions[questionIndex] ?? ''
+  const visibleQuestion = activeQuestion.slice(0, visibleLength)
+
+  useEffect(() => {
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
+    if (reduceMotion || questions.length <= 1) {
+      setQuestionIndex(0)
+      setVisibleLength(questions[0]?.length ?? 0)
+      setPhase('holding')
+      return
+    }
+
+    const timeout = window.setTimeout(() => {
+      if (phase === 'holding') {
+        setPhase('deleting')
+        return
+      }
+
+      if (phase === 'deleting') {
+        if (visibleLength > 0) {
+          setVisibleLength((length) => Math.max(0, length - questionTypingTiming.deleteStep))
+          return
+        }
+
+        setQuestionIndex((index) => (index + 1) % questions.length)
+        setPhase('typing')
+        return
+      }
+
+      if (visibleLength < activeQuestion.length) {
+        setVisibleLength((length) => Math.min(activeQuestion.length, length + 1))
+        return
+      }
+
+      setPhase('holding')
+    }, phase === 'holding' ? questionTypingTiming.hold + delayOffset : phase === 'deleting' ? questionTypingTiming.delete : questionTypingTiming.type)
+
+    return () => window.clearTimeout(timeout)
+  }, [activeQuestion, delayOffset, phase, questions, visibleLength])
+
+  return (
+    <span className="typed-question" aria-label={activeQuestion}>
+      <span className="typed-question-text">{visibleQuestion}</span>
+      <span className="typed-question-cursor" aria-hidden />
+    </span>
   )
 }
 
@@ -259,7 +404,7 @@ function UseCasesSection() {
       </div>
 
       <div className="use-case-stack">
-        {useCases.map((item) => (
+        {useCases.map((item, index) => (
           <article className="use-case-panel" key={item.title}>
             <div className="use-case-copy">
               <span className="item-cue">Role {item.number}</span>
@@ -275,7 +420,9 @@ function UseCasesSection() {
                   <Play size={16} aria-hidden />
                 </button>
               </header>
-              <div className="use-case-prompt">{item.prompt}</div>
+              <div className="use-case-prompt">
+                <TypedQuestion questions={item.prompts} delayOffset={index * 420} />
+              </div>
               <p>{item.answer}</p>
             </div>
           </article>
