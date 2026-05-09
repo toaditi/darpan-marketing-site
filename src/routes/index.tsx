@@ -335,7 +335,10 @@ function SiteHeader() {
 function HeroSection() {
   return (
     <section className="hero-section">
-      <div className="hero-background" aria-hidden />
+      <div className="hero-background" aria-hidden>
+        <span className="mirror-stage" />
+        <span className="mirror-horizon" />
+      </div>
 
       <div className="hero-content">
         <div className="hero-copy">
@@ -620,10 +623,6 @@ function ContactSection() {
     <section id="contact" className="contact-section">
       <div>
         <h2>Start with the reconciliation you still check by hand.</h2>
-        <p>
-          Pick one pair of systems. Define what should match. Review the first
-          mismatch list.
-        </p>
       </div>
       <div className="contact-actions">
         <a className="pill-action pill-action--solid" href="mailto:hello@drpn.ai?subject=Darpan%20marketing%20site%20inquiry">
