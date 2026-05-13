@@ -10,7 +10,6 @@ import {
   History,
   KeyRound,
   Play,
-  ShieldCheck,
   Sparkles,
   SquareTerminal,
   Workflow,
@@ -386,8 +385,8 @@ function HeroSection() {
               Request pilot access
               <ArrowRight size={15} aria-hidden />
             </a>
-            <a className="pill-action" href="#systems">
-              See an example run
+            <a className="pill-action" href="https://docs.drpn.ai">
+              Read the docs
             </a>
           </div>
           <ExampleStats />
@@ -667,15 +666,6 @@ function FaqSection() {
           </details>
         ))}
       </div>
-
-      <p className="faq-footnote">
-        <ShieldCheck size={15} aria-hidden />
-        Darpan is in invite-only pilot.{' '}
-        <a href="#contact" className="inline-link">
-          Request access
-          <ArrowUpRight size={13} aria-hidden />
-        </a>
-      </p>
     </section>
   )
 }
