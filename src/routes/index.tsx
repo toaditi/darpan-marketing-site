@@ -26,6 +26,8 @@ const navItems = [
   ['Workflow', '#workflow'],
   ['Systems', '#systems'],
   ['FAQ', '#faq'],
+  ['Docs', 'https://docs.drpn.ai'],
+  ['Contact', '#contact'],
 ] as const
 
 const productCards = [
@@ -52,15 +54,15 @@ const productCards = [
 const runSteps = [
   {
     step: 'Connect',
-    detail: 'Point Darpan at two sources: Shopify, NetSuite, HotWax, SFTP, or a REST endpoint.',
+    detail: 'Point Darpan at two sources — any API, file, SFTP drop, or database your team uses.',
   },
   {
-    step: 'Describe',
+    step: 'Map',
     detail: 'Save the schema and the primary ID fields that identify each record.',
   },
   {
     step: 'Compare',
-    detail: 'Run the reconciliation. Optionally apply a RuleSet for classification logic.',
+    detail: 'Run the reconciliation. Optionally apply a rule set to classify mismatches by reason.',
   },
   {
     step: 'Review',
@@ -69,29 +71,29 @@ const runSteps = [
 ]
 
 const systems = [
-  'Shopify',
-  'NetSuite',
-  'HotWax',
-  'SFTP',
+  'Commerce',
+  'ERP & accounting',
+  'WMS & fulfillment',
+  'Operations',
+  'Files & SFTP',
   'REST APIs',
-  'CSV / JSON files',
 ]
 
 const previewSourceFiles = [
-  ['Shopify Admin API', 'orders_2026-03.json', '21.4 MB'],
-  ['NetSuite SuiteQL', 'orders_2026-03.csv', '19.8 MB'],
+  ['Source A', 'orders_2026-03.json', '21.4 MB'],
+  ['Source B', 'orders_2026-03.csv', '19.8 MB'],
 ] as const
 
 const previewBuckets = [
-  ['Only in Shopify', '14'],
-  ['Only in NetSuite', '8'],
+  ['Only in Source A', '14'],
+  ['Only in Source B', '8'],
   ['Value mismatch', '21'],
 ] as const
 
 const previewRows = [
   ['SO-10481', 'Value mismatch', 'fulfillment_status differs'],
-  ['SO-10477', 'Missing in NetSuite', 'present in Shopify'],
-  ['SO-10472', 'Missing in Shopify', 'present in NetSuite'],
+  ['SO-10477', 'Missing in Source B', 'present in Source A'],
+  ['SO-10472', 'Missing in Source A', 'present in Source B'],
 ] as const
 
 const exampleStats = [
@@ -103,18 +105,18 @@ const useCases = [
   {
     icon: Workflow,
     title: 'For operators',
-    body: 'Customer Service keeps forwarding orders that say "paid" in Shopify but never reached the warehouse. Engineering swears the integration is fine. You see the symptoms every Monday morning.',
+    body: 'Customer Service keeps forwarding orders that say "paid" in one system but never reached the warehouse. Engineering swears the integration is fine. You see the symptoms every Monday morning.',
     prompts: [
-      'Which paid Shopify orders never reached NetSuite?',
-      'Which orders show fulfilled in Shopify but open in NetSuite?',
-      "Which cancellations didn't roll back inventory in NetSuite?",
+      'Which paid orders never reached the other system?',
+      'Which orders show fulfilled in one place but open in another?',
+      "Which cancellations didn't roll back inventory downstream?",
     ],
     answer: 'Darpan lists every record that left one system and never landed in the other, so the team can act before customers escalate.',
   },
   {
     icon: FileText,
     title: 'For finance teams',
-    body: 'Every close, a five-figure variance between Shopify revenue and the NetSuite GL burns two days. Refunds, returns, store credits, processor fees. Nobody has time to fully reconcile, but the CFO still asks where it came from.',
+    body: 'Every close, a five-figure variance between source-of-record revenue and the GL burns two days. Refunds, returns, store credits, processor fees. Nobody has time to fully reconcile, but the CFO still asks where it came from.',
     prompts: [
       'What is the revenue gap this month?',
       "Which refunds didn't post in both systems?",
@@ -131,7 +133,7 @@ const useCases = [
       'Which customers exist twice between systems?',
       'Which records changed in both systems before they synced?',
     ],
-    answer: 'Sources, schemas, primary IDs, and result evidence are saved as one run, so ops can rerun the check without pulling you into Slack.',
+    answer: 'Save the comparison as a run. Ops reruns it themselves on a schedule. You stop being the human cron job.',
   },
 ] as const
 
@@ -142,7 +144,7 @@ const faqItems = [
   },
   {
     question: 'Which systems can Darpan compare?',
-    answer: 'Anything that can be reached by API, SFTP, or file upload and mapped to a primary ID. Current connections include Shopify, NetSuite, and HotWax, plus generic SFTP and REST sources.',
+    answer: 'Anything that can be reached by API, SFTP, or file upload and mapped to a primary ID. Connectors are configured per source — if your system exposes records and IDs, Darpan can compare them.',
   },
   {
     question: 'What does a run return?',
@@ -352,8 +354,8 @@ function SiteHeader() {
         ))}
       </nav>
 
-      <a className="line-link header-contact" href="https://darpan-app.hotwax.io">
-        <span>Open Darpan</span>
+      <a className="line-link header-contact" href="#contact">
+        <span>Request access</span>
       </a>
     </header>
   )
@@ -371,21 +373,21 @@ function HeroSection() {
         <div className="hero-copy">
           <span className="hero-kicker">
             <Sparkles size={13} aria-hidden />
-            Darpan · Sanskrit for mirror
+            Reconciliation across your systems &amp; files
           </span>
           <h1>Spot the difference.</h1>
           <p>
-            Darpan is a reconciliation workspace for teams moving too fast for
-            manual checking. It returns every record that's missing, different,
-            or out of sync, with the evidence behind each call.
+            Darpan compares records across systems by primary ID. Every
+            missing, different, or out-of-sync row, with the evidence behind
+            each call. For teams moving too fast for manual checking.
           </p>
           <div className="hero-actions">
             <a className="pill-action pill-action--solid" href="#contact">
               Request pilot access
               <ArrowRight size={15} aria-hidden />
             </a>
-            <a className="pill-action" href="https://docs.drpn.ai">
-              Read the docs
+            <a className="pill-action" href="#systems">
+              See an example run
             </a>
           </div>
           <ExampleStats />
@@ -416,7 +418,7 @@ function RunResultPreview() {
       <header className="app-preview-header">
         <div>
           <span>Saved run</span>
-          <h2>Shopify ↔ NetSuite · March 2026 orders</h2>
+          <h2>Source A ↔ Source B · March 2026 orders</h2>
         </div>
         <button type="button" aria-label="Open run result">
           <Play size={16} aria-hidden />
