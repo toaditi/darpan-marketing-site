@@ -54,7 +54,7 @@ const productCards = [
 const runSteps = [
   {
     step: 'Connect',
-    detail: 'Point Darpan at two sources — any API, file, SFTP drop, or database your team uses.',
+    detail: 'Point Darpan at two sources — e.g. Shopify, NetSuite, HotWax, an SFTP drop, or a REST endpoint.',
   },
   {
     step: 'Map',
@@ -80,20 +80,20 @@ const systems = [
 ]
 
 const previewSourceFiles = [
-  ['Source A', 'orders_2026-03.json', '21.4 MB'],
-  ['Source B', 'orders_2026-03.csv', '19.8 MB'],
+  ['Shopify Admin API', 'orders_2026-03.json', '21.4 MB'],
+  ['NetSuite SuiteQL', 'orders_2026-03.csv', '19.8 MB'],
 ] as const
 
 const previewBuckets = [
-  ['Only in Source A', '14'],
-  ['Only in Source B', '8'],
+  ['Only in Shopify', '14'],
+  ['Only in NetSuite', '8'],
   ['Value mismatch', '21'],
 ] as const
 
 const previewRows = [
   ['SO-10481', 'Value mismatch', 'fulfillment_status differs'],
-  ['SO-10477', 'Missing in Source B', 'present in Source A'],
-  ['SO-10472', 'Missing in Source A', 'present in Source B'],
+  ['SO-10477', 'Missing in NetSuite', 'present in Shopify'],
+  ['SO-10472', 'Missing in Shopify', 'present in NetSuite'],
 ] as const
 
 const exampleStats = [
@@ -105,18 +105,18 @@ const useCases = [
   {
     icon: Workflow,
     title: 'For operators',
-    body: 'Customer Service keeps forwarding orders that say "paid" in one system but never reached the warehouse. Engineering swears the integration is fine. You see the symptoms every Monday morning.',
+    body: 'Customer Service keeps forwarding orders that say "paid" in Shopify but never reached the warehouse. Engineering swears the integration is fine. You see the symptoms every Monday morning.',
     prompts: [
-      'Which paid orders never reached the other system?',
-      'Which orders show fulfilled in one place but open in another?',
-      "Which cancellations didn't roll back inventory downstream?",
+      'Which paid Shopify orders never reached NetSuite?',
+      'Which orders show fulfilled in Shopify but open in NetSuite?',
+      "Which cancellations didn't roll back inventory in NetSuite?",
     ],
     answer: 'Darpan lists every record that left one system and never landed in the other, so the team can act before customers escalate.',
   },
   {
     icon: FileText,
     title: 'For finance teams',
-    body: 'Every close, a five-figure variance between source-of-record revenue and the GL burns two days. Refunds, returns, store credits, processor fees. Nobody has time to fully reconcile, but the CFO still asks where it came from.',
+    body: 'Every close, a five-figure variance between Shopify revenue and the NetSuite GL burns two days. Refunds, returns, store credits, processor fees. Nobody has time to fully reconcile, but the CFO still asks where it came from.',
     prompts: [
       'What is the revenue gap this month?',
       "Which refunds didn't post in both systems?",
@@ -418,7 +418,7 @@ function RunResultPreview() {
       <header className="app-preview-header">
         <div>
           <span>Saved run</span>
-          <h2>Source A ↔ Source B · March 2026 orders</h2>
+          <h2>Shopify ↔ NetSuite · March 2026 orders</h2>
         </div>
         <button type="button" aria-label="Open run result">
           <Play size={16} aria-hidden />
