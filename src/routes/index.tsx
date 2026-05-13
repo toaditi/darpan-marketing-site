@@ -1,15 +1,17 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import {
   ArrowRight,
   ArrowUpRight,
-  Braces,
+  Brackets,
   ChevronDown,
-  Database,
   FileText,
   GitCompareArrows,
   History,
+  KeyRound,
   Play,
+  ShieldCheck,
+  Sparkles,
   SquareTerminal,
   Workflow,
 } from 'lucide-react'
@@ -19,145 +21,148 @@ export const Route = createFileRoute('/')({
 })
 
 const navItems = [
+  ['Teams', '#use-cases'],
   ['Product', '#product'],
-  ['Workflow', '#run-model'],
+  ['Workflow', '#workflow'],
   ['Systems', '#systems'],
   ['FAQ', '#faq'],
-  ['Contact', '#contact'],
 ] as const
 
 const productCards = [
   {
-    number: '01',
-    icon: Database,
-    title: 'Source setup',
-    body: 'Select the systems, files, or APIs that should agree.',
-    action: 'Choose sources',
-  },
-  {
-    number: '02',
-    icon: Braces,
-    title: 'Field mapping',
-    body: 'Match records by the IDs and fields your team trusts.',
-    action: 'Map fields',
-  },
-  {
-    number: '03',
     icon: GitCompareArrows,
-    title: 'Mismatch review',
-    body: 'Review missing rows, changed values, and status differences.',
-    action: 'Review mismatches',
+    title: 'Record-by-record diff',
+    body: 'Matched on the primary IDs your team already trusts. No best-guess fuzzy joins.',
+    action: 'See match rules',
   },
-]
+  {
+    icon: Brackets,
+    title: 'Schema-aware values',
+    body: 'Field-level differences are read through the schema, so JSON, CSV, and API rows compare cleanly.',
+    action: 'See schema setup',
+  },
+  {
+    icon: FileText,
+    title: 'Evidence you can reopen',
+    body: 'Every saved run keeps inputs, counts, and generated output together. Auditable, rerunnable, exportable.',
+    action: 'See saved runs',
+  },
+] as const
 
 const runSteps = [
   {
     step: 'Connect',
-    detail: 'Select the two sources to reconcile.',
+    detail: 'Point Darpan at two sources: Shopify, NetSuite, HotWax, SFTP, or a REST endpoint.',
   },
   {
-    step: 'Map',
-    detail: 'Define the fields that identify and describe each record.',
+    step: 'Describe',
+    detail: 'Save the schema and the primary ID fields that identify each record.',
   },
   {
     step: 'Compare',
-    detail: 'Run the reconciliation and separate matches from mismatches.',
+    detail: 'Run the reconciliation. Optionally apply a RuleSet for classification logic.',
   },
   {
     step: 'Review',
-    detail: 'Open the counts, mismatch list, and output files.',
+    detail: 'Open counts, mismatch rows, and generated output files. Rerun on a schedule.',
   },
 ]
 
 const systems = [
-  'ERP',
-  'Commerce',
-  'Operations',
-  'Warehouse',
-  'Files',
-  'APIs',
+  'Shopify',
+  'NetSuite',
+  'HotWax',
+  'SFTP',
+  'REST APIs',
+  'CSV / JSON files',
 ]
 
 const previewSourceFiles = [
-  ['Shopify', 'Source A'],
-  ['NetSuite', 'Source B'],
+  ['Shopify Admin API', 'orders_2026-03.json', '21.4 MB'],
+  ['NetSuite SuiteQL', 'orders_2026-03.csv', '19.8 MB'],
 ] as const
 
 const previewBuckets = [
   ['Only in Shopify', '14'],
   ['Only in NetSuite', '8'],
-  ['Different values', '21'],
+  ['Value mismatch', '21'],
 ] as const
 
 const previewRows = [
-  ['REC-001', 'Value mismatch', 'field changed'],
-  ['REC-002', 'Missing in NetSuite', 'present in Shopify'],
-  ['REC-003', 'Missing in Shopify', 'present in NetSuite'],
+  ['SO-10481', 'Value mismatch', 'fulfillment_status differs'],
+  ['SO-10477', 'Missing in NetSuite', 'present in Shopify'],
+  ['SO-10472', 'Missing in Shopify', 'present in NetSuite'],
+] as const
+
+const exampleStats = [
+  ['Avg. records per file', '540K'],
+  ['Avg. run time', '18s'],
 ] as const
 
 const useCases = [
   {
-    number: '01',
     icon: Workflow,
     title: 'For operators',
-    body: 'Catch pending orders that cannot move to fulfillment because Shopify and NetSuite do not agree.',
+    body: 'Customer Service keeps forwarding orders that say "paid" in Shopify but never reached the warehouse. Engineering swears the integration is fine. You see the symptoms every Monday morning.',
     prompts: [
-      'Which pending orders are blocked from fulfillment?',
-      'Which Shopify orders are missing in NetSuite?',
-      'Which orders changed status before fulfillment?',
+      'Which paid Shopify orders never reached NetSuite?',
+      'Which orders show fulfilled in Shopify but open in NetSuite?',
+      "Which cancellations didn't roll back inventory in NetSuite?",
     ],
-    answer: 'Darpan shows the orders missing or different between Shopify and NetSuite so the team knows what must sync before fulfillment moves.',
+    answer: 'Darpan lists every record that left one system and never landed in the other, so the team can act before customers escalate.',
   },
   {
-    number: '02',
     icon: FileText,
     title: 'For finance teams',
-    body: 'During monthly close, check that Shopify and NetSuite agree before finance locks the books.',
+    body: 'Every close, a five-figure variance between Shopify revenue and the NetSuite GL burns two days. Refunds, returns, store credits, processor fees. Nobody has time to fully reconcile, but the CFO still asks where it came from.',
     prompts: [
-      'What needs to sync before month-end close?',
-      'Which revenue records disagree before close?',
-      'Which NetSuite lines do not match Shopify?',
+      'What is the revenue gap this month?',
+      "Which refunds didn't post in both systems?",
+      'Which orders fell on different sides of close?',
     ],
-    answer: 'Darpan shows the missing or different records so finance can clear the mismatch list before closing the month.',
+    answer: 'Darpan returns the exact rows behind the variance, classified and exportable, so close goes out with an answer instead of an estimate.',
   },
   {
-    number: '03',
     icon: SquareTerminal,
     title: 'For technical leaders',
-    body: 'Replace one-off scripts and spreadsheets with a repeatable comparison your team can reopen.',
+    body: 'Ops keeps asking you to "just check" if last night\'s sync ran clean. You SSH in, run the same SQL, dump CSVs, diff in a spreadsheet. The query lives in your head and nowhere else.',
     prompts: [
-      'Where is the reconciliation logic defined?',
-      'Which saved run produced this output?',
-      'What changed since the last comparison?',
+      "Did last night's sync drop any orders?",
+      'Which customers exist twice between systems?',
+      'Which records changed in both systems before they synced?',
     ],
-    answer: 'Sources, field mapping, and run output stay together.',
+    answer: 'Sources, schemas, primary IDs, and result evidence are saved as one run, so ops can rerun the check without pulling you into Slack.',
   },
 ] as const
 
 const faqItems = [
   {
     question: 'What does Darpan do?',
-    answer: 'Darpan compares records across two systems and shows the rows that are missing, different, or out of sync.',
+    answer: 'Darpan compares records across two systems and returns the rows that are matched, missing in source, or have a value mismatch, along with the evidence behind each call.',
   },
   {
     question: 'Which systems can Darpan compare?',
-    answer: 'Darpan can compare commerce, ERP, operations, warehouse, file, and API data as long as the records can be mapped to a shared identifier.',
+    answer: 'Anything that can be reached by API, SFTP, or file upload and mapped to a primary ID. Current connections include Shopify, NetSuite, and HotWax, plus generic SFTP and REST sources.',
   },
   {
     question: 'What does a run return?',
-    answer: 'A run returns counts, classifications, evidence, history, and output files so the team can review exactly what changed.',
+    answer: 'Counts by category (Matched, Missing in source, Value mismatch, Processing error), per-record evidence, generated output files, and the saved setup that produced the result.',
   },
   {
     question: 'Does Darpan change data in our systems?',
-    answer: 'No. Darpan highlights mismatches first. Your team decides what should be corrected in the source systems.',
+    answer: 'No. Darpan is read-only against your source systems. It surfaces the mismatch list; your team decides what to correct at the source.',
+  },
+  {
+    question: 'How is our data handled?',
+    answer: 'Each customer runs in their own tenant. Access is scoped to that tenant context, source credentials are stored as connection records, and runs preserve evidence for review and rerun. Darpan is in invite-only pilot. Security questions can be sent to hello@drpn.ai.',
   },
   {
     question: 'Who uses Darpan?',
-    answer: 'Operators, finance teams, and technical leaders use Darpan when manual reconciliation is slowing down fulfillment, close, or reporting work.',
+    answer: 'Operators, finance teams, and technical leaders who are still reconciling commerce, ERP, and warehouse data by hand when it should be a saved run.',
   },
   {
     question: 'How do teams start?',
-    answer: 'Start with one recurring comparison: choose two sources, map the trusted fields, run the reconciliation, and review the mismatch list.',
+    answer: 'Pick one recurring comparison you still check by hand. Save its sources, schema, and primary IDs as a run, then schedule it. Pilot access is invite-only today. Request access from the contact section below.',
   },
 ] as const
 
@@ -203,6 +208,7 @@ function useScrollReveal() {
           '.footer-links',
           '.footer-wordmark',
           '.site-footer > p',
+          '.example-stats',
         ].join(', ')
       )
     )
@@ -240,6 +246,28 @@ function useScrollReveal() {
   }, [])
 }
 
+function useInView<T extends HTMLElement>() {
+  const ref = useRef<T | null>(null)
+  const [inView, setInView] = useState(false)
+
+  useEffect(() => {
+    const node = ref.current
+    if (!node || !('IntersectionObserver' in window)) {
+      setInView(true)
+      return
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => setInView(entry.isIntersecting),
+      { threshold: 0.2 }
+    )
+    observer.observe(node)
+    return () => observer.disconnect()
+  }, [])
+
+  return { ref, inView }
+}
+
 type TypingPhase = 'holding' | 'deleting' | 'typing'
 
 const questionTypingTiming = {
@@ -252,9 +280,11 @@ const questionTypingTiming = {
 function TypedQuestion({
   questions,
   delayOffset = 0,
+  active = true,
 }: {
   questions: readonly string[]
   delayOffset?: number
+  active?: boolean
 }) {
   const [questionIndex, setQuestionIndex] = useState(0)
   const [visibleLength, setVisibleLength] = useState(questions[0]?.length ?? 0)
@@ -266,10 +296,7 @@ function TypedQuestion({
   useEffect(() => {
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
 
-    if (reduceMotion || questions.length <= 1) {
-      setQuestionIndex(0)
-      setVisibleLength(questions[0]?.length ?? 0)
-      setPhase('holding')
+    if (reduceMotion || !active || questions.length <= 1) {
       return
     }
 
@@ -299,7 +326,7 @@ function TypedQuestion({
     }, phase === 'holding' ? questionTypingTiming.hold + delayOffset : phase === 'deleting' ? questionTypingTiming.delete : questionTypingTiming.type)
 
     return () => window.clearTimeout(timeout)
-  }, [activeQuestion, delayOffset, phase, questions, visibleLength])
+  }, [activeQuestion, active, delayOffset, phase, questions, visibleLength])
 
   return (
     <span className="typed-question" aria-label={activeQuestion}>
@@ -342,20 +369,26 @@ function HeroSection() {
 
       <div className="hero-content">
         <div className="hero-copy">
-          <h1>See where your systems disagree.</h1>
+          <span className="hero-kicker">
+            <Sparkles size={13} aria-hidden />
+            Darpan · Sanskrit for mirror
+          </span>
+          <h1>Spot the difference.</h1>
           <p>
-            Darpan is for teams moving too fast for manual reconciliation. It
-            compares records across systems and returns the rows that are
-            missing, different, or out of sync.
+            Darpan is a reconciliation workspace for teams moving too fast for
+            manual checking. It returns every record that's missing, different,
+            or out of sync, with the evidence behind each call.
           </p>
           <div className="hero-actions">
-            <a className="pill-action pill-action--solid" href="mailto:hello@drpn.ai?subject=Darpan%20demo">
-              Start with a run
+            <a className="pill-action pill-action--solid" href="#contact">
+              Request pilot access
+              <ArrowRight size={15} aria-hidden />
             </a>
             <a className="pill-action" href="https://docs.drpn.ai">
-              Read docs
+              Read the docs
             </a>
           </div>
+          <ExampleStats />
         </div>
 
         <RunResultPreview />
@@ -364,13 +397,26 @@ function HeroSection() {
   )
 }
 
+function ExampleStats() {
+  return (
+    <dl className="example-stats" aria-label="Example reconciliation run metrics">
+      {exampleStats.map(([label, value]) => (
+        <div key={label}>
+          <dt>{label}</dt>
+          <dd>{value}</dd>
+        </div>
+      ))}
+    </dl>
+  )
+}
+
 function RunResultPreview() {
   return (
     <article className="app-preview" aria-label="Darpan saved run result preview">
       <header className="app-preview-header">
         <div>
-          <span>Example run</span>
-          <h2>Shopify / NetSuite</h2>
+          <span>Saved run</span>
+          <h2>Shopify ↔ NetSuite · March 2026 orders</h2>
         </div>
         <button type="button" aria-label="Open run result">
           <Play size={16} aria-hidden />
@@ -379,14 +425,15 @@ function RunResultPreview() {
 
       <section className="app-preview-source" aria-label="Run source details">
         <div>
-          <span>Saved run</span>
-          <strong>Completed with output</strong>
+          <span>Status</span>
+          <strong>Completed</strong>
         </div>
         <div className="app-preview-files">
-          {previewSourceFiles.map(([label, fileName]) => (
+          {previewSourceFiles.map(([label, fileName, size]) => (
             <p key={fileName}>
               <span>{label}</span>
               <strong>{fileName}</strong>
+              <span className="app-preview-files-size">{size}</span>
             </p>
           ))}
         </div>
@@ -429,8 +476,10 @@ function SectionCue({ number, label }: { number: string; label: string }) {
 }
 
 function UseCasesSection() {
+  const { ref, inView } = useInView<HTMLElement>()
+
   return (
-    <section id="use-cases" className="page-section use-cases-section">
+    <section id="use-cases" ref={ref} className="page-section use-cases-section">
       <div className="section-heading">
         <SectionCue number="01" label="Teams" />
         <h2>Different teams. One mismatch list.</h2>
@@ -440,7 +489,6 @@ function UseCasesSection() {
         {useCases.map((item, index) => (
           <article className="use-case-panel" key={item.title}>
             <div className="use-case-copy">
-              <span className="item-cue">Role {item.number}</span>
               <item.icon size={24} aria-hidden />
               <h3>{item.title}</h3>
               <p>{item.body}</p>
@@ -448,13 +496,17 @@ function UseCasesSection() {
 
             <div className="use-case-window">
               <header>
-                <span>Run review</span>
+                <span>Ask Darpan</span>
                 <button type="button" aria-label={`Open ${item.title} run preview`}>
                   <Play size={16} aria-hidden />
                 </button>
               </header>
               <div className="use-case-prompt">
-                <TypedQuestion questions={item.prompts} delayOffset={index * 420} />
+                <TypedQuestion
+                  questions={item.prompts}
+                  delayOffset={index * 240}
+                  active={inView}
+                />
               </div>
               <p>{item.answer}</p>
             </div>
@@ -470,14 +522,13 @@ function ProductSection() {
     <section id="product" className="page-section product-section">
       <div className="section-heading">
         <SectionCue number="02" label="Product" />
-        <h2>What Darpan checks.</h2>
+        <h2>What every run gives you back.</h2>
       </div>
 
       <div className="product-panels">
         {productCards.map((item) => (
           <article className="product-panel" key={item.title}>
             <div className="product-panel-meta" aria-hidden>
-              <span>Check {item.number}</span>
               <div>
                 <item.icon size={44} />
               </div>
@@ -486,7 +537,7 @@ function ProductSection() {
               <h3>{item.title}</h3>
               <p>{item.body}</p>
             </div>
-            <a className="inline-action" href="#run-model">
+            <a className="inline-action" href="#workflow">
               {item.action}
               <ArrowUpRight size={18} aria-hidden />
             </a>
@@ -499,13 +550,13 @@ function ProductSection() {
 
 function RunModelSection() {
   return (
-    <section id="run-model" className="page-section run-model-section">
+    <section id="workflow" className="page-section run-model-section">
       <div className="run-model-copy">
         <SectionCue number="03" label="Workflow" />
         <h2>How a run works.</h2>
         <p>
-          A run is one repeatable reconciliation: sources, mapping, comparison,
-          and output.
+          A saved run is one repeatable reconciliation: sources, schema, primary
+          IDs, optional RuleSet, and the generated output that proves the result.
         </p>
       </div>
 
@@ -547,8 +598,8 @@ function RunArtifactPreview() {
     <article className="run-artifact">
       <header>
         <div>
-          <span>Saved Run</span>
-          <h3>Recurring reconciliation</h3>
+          <span>Saved run</span>
+          <h3>Daily orders reconciliation</h3>
         </div>
         <button type="button" aria-label="Open run result">
           <Play size={18} aria-hidden />
@@ -565,27 +616,27 @@ function RunArtifactPreview() {
           <strong>43</strong>
         </div>
         <div>
-          <span>Match rule</span>
-          <strong>Record comparison</strong>
+          <span>Primary ID</span>
+          <strong>order_number</strong>
         </div>
         <div>
           <span>Output</span>
-          <strong>3 files</strong>
+          <strong>1 file</strong>
         </div>
       </div>
 
       <ol>
         <li>
           <History size={16} aria-hidden />
-          Completed runs keep setup and result together.
+          Saved runs keep schema, IDs, and result evidence together.
         </li>
         <li>
-          <FileText size={16} aria-hidden />
-          Output files list the records to review.
+          <KeyRound size={16} aria-hidden />
+          Matching is keyed on the primary IDs your team already trusts.
         </li>
         <li>
           <Workflow size={16} aria-hidden />
-          Scheduled runs repeat the same comparison.
+          Automations rerun the same comparison on a schedule.
         </li>
       </ol>
     </article>
@@ -614,6 +665,15 @@ function FaqSection() {
           </details>
         ))}
       </div>
+
+      <p className="faq-footnote">
+        <ShieldCheck size={15} aria-hidden />
+        Darpan is in invite-only pilot.{' '}
+        <a href="#contact" className="inline-link">
+          Request access
+          <ArrowUpRight size={13} aria-hidden />
+        </a>
+      </p>
     </section>
   )
 }
@@ -623,14 +683,21 @@ function ContactSection() {
     <section id="contact" className="contact-section">
       <div>
         <h2>Start with the reconciliation you still check by hand.</h2>
+        <p>
+          Pilot access is invite-only. Tell us about one comparison you would run
+          weekly if it were saved, and we will get back with next steps.
+        </p>
       </div>
       <div className="contact-actions">
-        <a className="pill-action pill-action--solid" href="mailto:hello@drpn.ai?subject=Darpan%20marketing%20site%20inquiry">
-          Schedule a walkthrough
+        <a
+          className="pill-action pill-action--solid"
+          href="mailto:hello@drpn.ai?subject=Darpan%20pilot%20access&body=Comparison%20I%20still%20run%20by%20hand%3A%0A%0ASource%20systems%3A%0A%0AFrequency%3A%0A%0ATeam%3A%0A"
+        >
+          Request pilot access
           <ArrowRight size={17} aria-hidden />
         </a>
-        <a className="pill-action" href="https://darpan-app.hotwax.io">
-          Open Darpan
+        <a className="pill-action" href="https://docs.drpn.ai">
+          Read the docs
         </a>
       </div>
     </section>
@@ -657,9 +724,7 @@ function SiteFooter() {
         <span>Darpan</span>
       </div>
 
-      <p>
-        Copyright 2026.
-      </p>
+      <p>© {new Date().getFullYear()} Darpan. All rights reserved.</p>
     </footer>
   )
 }
