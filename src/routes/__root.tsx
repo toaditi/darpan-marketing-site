@@ -6,40 +6,45 @@ export const Route = createRootRoute({
     meta: [
       { charSet: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-      { name: 'theme-color', content: '#090909' },
-      { title: 'Darpan — Reconciliation across your systems | Compare records by primary ID' },
+      { name: 'theme-color', content: '#F0F2EE' },
+      { title: 'Darpan — AI reconciliation for retail' },
       {
         name: 'description',
         content:
-          'Darpan is a reconciliation tool. It compares records across any two sources — APIs, files, SFTP, or databases — by primary ID and returns the rows that are missing, different, or out of sync.',
+          'Darpan is AI reconciliation for retail finance teams. Connect your systems, surface variance by primary ID, and close the books with evidence behind every line.',
       },
       { property: 'og:type', content: 'website' },
       { property: 'og:site_name', content: 'Darpan' },
       { property: 'og:url', content: 'https://drpn.ai/' },
       {
         property: 'og:title',
-        content: 'Darpan — Reconciliation across your systems',
+        content: 'Darpan — AI reconciliation for retail',
       },
       {
         property: 'og:description',
         content:
-          'Compare records across any two sources by primary ID. Every missing, different, or out-of-sync row, with the evidence behind it. Invite-only pilot.',
+          'Retail reconciliation that closes in hours, not weeks. Connect your systems, surface variance by primary ID, and close with evidence behind every line.',
       },
-      { property: 'og:image', content: 'https://drpn.ai/darpan-hero-light.png' },
-      { property: 'og:image:alt', content: 'Darpan saved-run result preview' },
       { name: 'twitter:card', content: 'summary_large_image' },
       {
         name: 'twitter:title',
-        content: 'Darpan — Reconciliation across your systems',
+        content: 'Darpan — AI reconciliation for retail',
       },
       {
         name: 'twitter:description',
         content:
-          'Compare records across systems by primary ID and review every difference. Invite-only pilot.',
+          'Retail reconciliation that closes in hours, not weeks. Variance surfaced by primary ID, with the evidence behind every line.',
       },
-      { name: 'twitter:image', content: 'https://drpn.ai/darpan-hero-light.png' },
     ],
-    links: [{ rel: 'canonical', href: 'https://drpn.ai/' }],
+    links: [
+      { rel: 'canonical', href: 'https://drpn.ai/' },
+      { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
+      {
+        rel: 'preconnect',
+        href: 'https://fonts.gstatic.com',
+        crossOrigin: 'anonymous',
+      },
+    ],
   }),
   shellComponent: RootDocument,
 })
